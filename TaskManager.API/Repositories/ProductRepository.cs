@@ -10,7 +10,7 @@ using TaskManager.API.Services;
 namespace TaskManager.API.Repositories
 {
 
-    public class ProjectRepository : IProjectService
+    public class ProjectRepository : IProjectService, IDisposable
     {
         readonly TaskManagerDbContext _dbContext;
 
