@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using TaskManager.API.Models;
 using TaskManager.API.Services;
 
@@ -23,7 +20,7 @@ namespace TaskManager.API.Controllers
         public IActionResult GetProjects()
         {
 
-            var projectsFromRepo = _projectRepository.GetProjects();
+            var projectsFromRepo = _projectRepository.GetAllProjects();
 
             return Ok(projectsFromRepo);
         }
@@ -31,7 +28,7 @@ namespace TaskManager.API.Controllers
         [HttpGet("{projectId}", Name = "GetProject")]
         public IActionResult GetProject(Guid projectId)
         {
-            var projectFromRepo = _projectRepository.GetProject(projectId);
+            var projectFromRepo = _projectRepository.GetProjectData(projectId);
 
             if (projectFromRepo == null)
             {
@@ -46,7 +43,7 @@ namespace TaskManager.API.Controllers
         {
             _projectRepository.AddProject(projectToAdd);
 
-            _projectRepository.SaveAsync();
+            _projectRepository.Save();
 
             return CreatedAtRoute("GetProject",
                 new { projectId = projectToAdd.ProjectId },
@@ -56,16 +53,16 @@ namespace TaskManager.API.Controllers
         [HttpDelete("{projectId}")]        
         public IActionResult DeleteProject(Guid projectId)
         {
-            var projectFromRepo = _projectRepository.GetProject(projectId);
+            var projectFromRepo = _projectRepository.GetProjectData(projectId);
 
             if (projectFromRepo == null)
             {
                 return NotFound();
             }
 
-             //_projectRepository.DeleteProject(projectFromRepo);
+             _projectRepository.DeleteProject(projectId);
 
-            _projectRepository.SaveAsync();
+            _projectRepository.Save();
 
             return NoContent();
         }
@@ -74,15 +71,15 @@ namespace TaskManager.API.Controllers
         public IActionResult UpdateProject(Guid projectId,
             [FromBody] Project projectForUpdate)
         {
-            var projectFromRepo = _projectRepository.GetProject(projectId);
+            var projectFromRepo = _projectRepository.GetProjectData(projectId);
             if (projectFromRepo == null)
             {
                 return NotFound();
             }            
 
-            //_projectRepository.UpdateProject(projectFromRepo);
+            _projectRepository.UpdateProject(projectFromRepo);
 
-            _projectRepository.SaveAsync();
+            _projectRepository.Save();
 
             return NoContent();
         }
