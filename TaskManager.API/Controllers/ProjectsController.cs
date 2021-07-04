@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using TaskManager.API.Models;
 using TaskManager.API.Services;
@@ -7,6 +8,7 @@ namespace TaskManager.API.Controllers
 {
     [Route("api/projects")]
     [ApiController]
+    [EnableCors("TaskManagerPolicy")]
     public class ProjectsController : Controller
     {
         private readonly IProjectService _projectRepository;
@@ -68,14 +70,16 @@ namespace TaskManager.API.Controllers
         }
 
         [HttpPut("{projectId}")]
-        public IActionResult UpdateProject(Guid projectId,
-            [FromBody] Project projectForUpdate)
+        public IActionResult UpdateProject([FromBody] Project projectForUpdate)
         {
-            var projectFromRepo = _projectRepository.GetProjectData(projectId);
+            var projectFromRepo = _projectRepository.GetProjectData(projectForUpdate.ProjectId);
             if (projectFromRepo == null)
             {
                 return NotFound();
-            }            
+            }
+            projectFromRepo.ProjectName = projectForUpdate.ProjectName;
+            projectFromRepo.DateOfStart= projectForUpdate.DateOfStart;
+            projectFromRepo.TeamSize = projectForUpdate.TeamSize;
 
             _projectRepository.UpdateProject(projectFromRepo);
 
