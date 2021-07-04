@@ -36,8 +36,8 @@ namespace TaskManager.API
 
             services.AddCors(options =>
             {
-                options.AddPolicy("AllowAllOriginsHeadersAndMethods",
-                    builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+                options.AddPolicy("TaskManagerPolicy",
+                    builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200"));
             });
             services.AddTransient<IProjectService, ProjectRepository>();
 
@@ -45,7 +45,7 @@ namespace TaskManager.API
             {
                 setupAction.SwaggerDoc("TaskManagerAPISpecification", new OpenApiInfo()
                 {
-                    Title = "TaskManager API V1.0",
+                    Title = "Task Manager API V1.0",
                     Version = "1.0",
                     Description = "API for Task Manager created with ASP.NET Core 5.0",
                     Contact = new OpenApiContact()
@@ -80,7 +80,6 @@ namespace TaskManager.API
                 app.UseDeveloperExceptionPage();
             }
 
-
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
@@ -102,7 +101,7 @@ namespace TaskManager.API
             });
 
             // Enable CORS
-            app.UseCors("AllowAllOriginsHeadersAndMethods");
+            app.UseCors("TaskManagerPolicy");
 
             app.UseAuthorization();
 
