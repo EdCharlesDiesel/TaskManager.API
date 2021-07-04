@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
+using TaskManager.API.Context;
 using TaskManager.API.Models;
 using TaskManager.API.Services;
+using System.Linq;
 
 namespace TaskManager.API.Controllers
 {
@@ -12,10 +15,39 @@ namespace TaskManager.API.Controllers
     public class ProjectsController : Controller
     {
         private readonly IProjectService _projectRepository;
+        private readonly TaskManagerDbContext _context;
 
-        public ProjectsController(IProjectService projectRepository)
+        public ProjectsController(IProjectService projectRepository, TaskManagerDbContext context )
         {
             _projectRepository = projectRepository ?? throw new ArgumentNullException(nameof(projectRepository));
+            _context= context ?? throw new ArgumentNullException(nameof(context));
+        }
+
+        [HttpGet()]
+        public ActionResult<IEnumerable<Project>> Search(string searchBy,string seachText)
+        {
+
+            List<Project> projects = null;
+            if (searchBy == "ProjectId")
+            {
+                projects = _context.Projects.Where(temp => temp.ProjectId.ToString().Contains(seachText)).ToList();
+            }
+            else if (searchBy == "ProjectName")
+            {
+                projects = _context.Projects.Where(temp => temp.ProjectName.ToString().Contains(seachText)).ToList();
+            }
+
+            if (searchBy == "DateOfStart")
+            {
+                projects = _context.Projects.Where(temp => temp.ProjectId.ToString().Contains(seachText)).ToList();
+            }
+
+            if (searchBy =="TeamSize")
+            {
+                projects = _context.Projects.Where(temp => temp.ProjectId.ToString().Contains(seachText)).ToList();
+            }
+
+            return projects;
         }
 
         [HttpGet()]
