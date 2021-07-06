@@ -6,6 +6,7 @@ using TaskManager.API.Context;
 using TaskManager.API.Models;
 using TaskManager.API.Services;
 using System.Linq;
+using TaskManager.API.Identity;
 
 namespace TaskManager.API.Controllers
 {
@@ -16,11 +17,13 @@ namespace TaskManager.API.Controllers
     {
         private readonly IProjectService _projectRepository;
         private readonly TaskManagerDbContext _context;
+        private readonly ApplicationDbContext _dbcontext;
 
-        public ProjectsController(IProjectService projectRepository, TaskManagerDbContext context )
+        public ProjectsController(IProjectService projectRepository, TaskManagerDbContext context, ApplicationDbContext dbcontext)
         {
             _projectRepository = projectRepository ?? throw new ArgumentNullException(nameof(projectRepository));
             _context= context ?? throw new ArgumentNullException(nameof(context));
+            _dbcontext = dbcontext ?? throw new ArgumentNullException(nameof(dbcontext));
         }
 
         [HttpGet()]

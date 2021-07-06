@@ -3,9 +3,10 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace TaskManager.API.Identity
 {
-    public class ApplicationRoleStore:RoleStore<ApplicationRoles,ApplicationDbContext>
+    public class ApplicationRoleStore:RoleStore<ApplicationRole,ApplicationDbContext>
     {
-        public ApplicationRoleStore(ApplicationDbContext applicationDbContext,IdentityErrorDescriber identityErrorDescriber): base(applicationDbContext,identityErrorDescriber)
+        public ApplicationRoleStore(ApplicationDbContext applicationDbContext,IdentityErrorDescriber identityErrorDescriber):
+            base(applicationDbContext,identityErrorDescriber)
         {
 
         }

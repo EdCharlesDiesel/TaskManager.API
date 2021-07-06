@@ -2,7 +2,7 @@
 
 namespace TaskManager.API.Identity
 {
-    public class ApplicationRoles: IdentityRole<string>
+    public class ApplicationRole: IdentityRole<string>
     {
     }
 }

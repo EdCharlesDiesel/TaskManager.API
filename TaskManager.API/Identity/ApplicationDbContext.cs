@@ -5,7 +5,7 @@ using TaskManager.API.Models;
 
 namespace TaskManager.API.Identity
 {
-    public class ApplicationDbContext: IdentityDbContext<ApplicationUser,ApplicationRoles,string>
+    public class ApplicationDbContext: IdentityDbContext<ApplicationUser,ApplicationRole,string>
     {
         public ApplicationDbContext(DbContextOptions options): base(options)
         {
