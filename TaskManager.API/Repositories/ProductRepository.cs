@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TaskManager.API.Context;
+using TaskManager.API.Identity;
 using TaskManager.API.Models;
 using TaskManager.API.Services;
 
@@ -11,11 +12,12 @@ namespace TaskManager.API.Repositories
 
     public class ProjectRepository : IProjectService, IDisposable
     {
-        readonly TaskManagerDbContext _dbContext;
+        //private readonly TaskManagerDbContext _dbContext;
+        private readonly ApplicationDbContext _dbContext;
 
-        public ProjectRepository(TaskManagerDbContext dbContext)
+        public ProjectRepository(ApplicationDbContext dbContext)
         {
-            _dbContext = dbContext?? throw new ArgumentNullException(nameof(TaskManagerDbContext));
+            _dbContext = dbContext?? throw new ArgumentNullException(nameof(_dbContext));
         }
 
         public Guid AddProject(Project project)

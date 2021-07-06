@@ -10,10 +10,10 @@ namespace TaskManager.API.Identity
     {
         public ApplicationSignInManger(ApplicationUserManager applicationUserManager, IHttpContextAccessor httpContextAccessor,
             IUserClaimsPrincipalFactory<ApplicationUser> userClaimsPrincipalFactory, IOptions<IdentityOptions> options,
-            ILogger<ApplicationSignInManger> logger, IAuthenticationSchemeProvider schemes) : base(applicationUserManager,
-                httpContextAccessor, userClaimsPrincipalFactory, options, logger, schemes)
+            ILogger<ApplicationSignInManger> logger, IAuthenticationSchemeProvider schemes, IUserConfirmation<ApplicationUser> confirmation) :base(applicationUserManager,httpContextAccessor,userClaimsPrincipalFactory,
+                options,logger,schemes,confirmation)
         {
-
+            
         }
     }
 }

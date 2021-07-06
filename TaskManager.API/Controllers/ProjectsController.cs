@@ -16,42 +16,41 @@ namespace TaskManager.API.Controllers
     public class ProjectsController : Controller
     {
         private readonly IProjectService _projectRepository;
-        private readonly TaskManagerDbContext _context;
-        private readonly ApplicationDbContext _dbcontext;
+        //private readonly TaskManagerDbContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public ProjectsController(IProjectService projectRepository, TaskManagerDbContext context, ApplicationDbContext dbcontext)
+        public ProjectsController(IProjectService projectRepository,  ApplicationDbContext context)
         {
             _projectRepository = projectRepository ?? throw new ArgumentNullException(nameof(projectRepository));
-            _context= context ?? throw new ArgumentNullException(nameof(context));
-            _dbcontext = dbcontext ?? throw new ArgumentNullException(nameof(dbcontext));
+            _context= context ?? throw new ArgumentNullException(nameof(context));            
         }
 
-        [HttpGet()]
-        public ActionResult<IEnumerable<Project>> Search(string searchBy,string seachText)
-        {
+        //[HttpGet()]
+        //public ActionResult<IEnumerable<Project>> Search(string searchBy,string seachText)
+        //{
 
-            List<Project> projects = null;
-            if (searchBy == "ProjectId")
-            {
-                projects = _context.Projects.Where(temp => temp.ProjectId.ToString().Contains(seachText)).ToList();
-            }
-            else if (searchBy == "ProjectName")
-            {
-                projects = _context.Projects.Where(temp => temp.ProjectName.ToString().Contains(seachText)).ToList();
-            }
+        //    List<Project> projects = null;
+        //    if (searchBy == "ProjectId")
+        //    {
+        //        projects = _context.Projects.Where(temp => temp.ProjectId.ToString().Contains(seachText)).ToList();
+        //    }
+        //    else if (searchBy == "ProjectName")
+        //    {
+        //        projects = _context.Projects.Where(temp => temp.ProjectName.ToString().Contains(seachText)).ToList();
+        //    }
 
-            if (searchBy == "DateOfStart")
-            {
-                projects = _context.Projects.Where(temp => temp.ProjectId.ToString().Contains(seachText)).ToList();
-            }
+        //    if (searchBy == "DateOfStart")
+        //    {
+        //        projects = _context.Projects.Where(temp => temp.ProjectId.ToString().Contains(seachText)).ToList();
+        //    }
 
-            if (searchBy =="TeamSize")
-            {
-                projects = _context.Projects.Where(temp => temp.ProjectId.ToString().Contains(seachText)).ToList();
-            }
+        //    if (searchBy =="TeamSize")
+        //    {
+        //        projects = _context.Projects.Where(temp => temp.ProjectId.ToString().Contains(seachText)).ToList();
+        //    }
 
-            return projects;
-        }
+        //    return projects;
+        //}
 
         [HttpGet()]
         public IActionResult GetProjects()

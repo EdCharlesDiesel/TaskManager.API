@@ -16,7 +16,7 @@ namespace TaskManager.API.Controllers
         }
 
         [HttpPost]
-        [Route("authenticate")]
+        [Route("/authenticate")]
         public async  Task<IActionResult> Authenticate([FromBody] LoginViewModel loginViewModel)
         {
             var user = await _usersService.Authenticate(loginViewModel);

@@ -67,7 +67,7 @@ namespace TaskManager.API
 
 
             var connectionString = Configuration["ConnectionStrings:TaskManagerDbContextDBConnectionString"];
-            services.AddDbContext<TaskManagerDbContext>(o => o.UseSqlServer(connectionString));
+            services.AddDbContext<ApplicationDbContext>(o => o.UseSqlServer(connectionString));
 
             services.AddTransient<IRoleStore<ApplicationRole>, ApplicationRoleStore>();
             services.AddTransient<UserManager<ApplicationUser>, ApplicationUserManager>();
@@ -100,46 +100,7 @@ namespace TaskManager.API
             app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseRouting();
-
-            IServiceScopeFactory serviceScopeFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
-            using (IServiceScope scope = serviceScopeFactory.CreateScope())
-            {
-                var roleManger = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
-                var userManger = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-
-                //Create Admin Role
-                if (!await roleManger.RoleExistsAsync("Admin"))
-                {
-                    var role = new ApplicationRole();
-                    role.Name = "Admin";
-                    await roleManger.CreateAsync(role);
-                }
-
-                //Create Admin user
-                if (await userManger.FindByNameAsync("admin")== null)
-                {
-                    var user = new ApplicationUser();
-                    user.UserName = "admin";
-                    user.Email = "admin@gmail.com";
-                    var userPassword = "Admin123#";
-                    var checkUser = await userManger.CreateAsync(user, userPassword);
-                    
-                    if (checkUser.Succeeded)
-                    {
-                        await userManger.AddToRoleAsync(user, "Admin");
-                    }
-                }
-
-                //Create Employee Role
-                if (!await roleManger.RoleExistsAsync("Admin"))
-                {
-                    var role = new ApplicationRole();
-                    role.Name = "Admin";
-                    await roleManger.CreateAsync(role);
-                }
-
-            }
+            app.UseRouting();           
 
             app.UseSwagger();
 
