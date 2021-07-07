@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using TaskManager.API.Models;
+﻿using System.Collections.Generic;
+using TaskManager.Models;
 
 namespace TaskManager.API.Services
 {
     public interface IProjectService
     {     
         List<Project> GetAllProjects();
-        Guid AddProject(Project project);
-        Guid UpdateProject(Project project);
-        Project GetProjectData(Guid projectId);
-        string DeleteProject(Guid projectId);
+        int AddProject(Project project);
+        int UpdateProject(Project project);
+        Project GetProjectData(int projectId);
+        string DeleteProject(int projectId);
         bool Save();
     }    
 }

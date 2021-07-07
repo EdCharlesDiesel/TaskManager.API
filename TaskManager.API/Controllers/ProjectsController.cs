@@ -1,125 +1,98 @@
-﻿using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using TaskManager.API.Context;
-using TaskManager.API.Models;
-using TaskManager.API.Services;
+﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TaskManager.API.Identity;
+using TaskManager.Models;
 
-namespace TaskManager.API.Controllers
+namespace MvcTaskManager.Controllers
 {
-    [Route("api/projects")]
-    [ApiController]
-    [EnableCors("TaskManagerPolicy")]
     public class ProjectsController : Controller
     {
-        private readonly IProjectService _projectRepository;
-        //private readonly TaskManagerDbContext _context;
-        private readonly ApplicationDbContext _context;
+        private ApplicationDbContext db;
 
-        public ProjectsController(IProjectService projectRepository,  ApplicationDbContext context)
+        public ProjectsController(ApplicationDbContext db)
         {
-            _projectRepository = projectRepository ?? throw new ArgumentNullException(nameof(projectRepository));
-            _context= context ?? throw new ArgumentNullException(nameof(context));            
+            this.db = db;
         }
 
-        //[HttpGet()]
-        //public ActionResult<IEnumerable<Project>> Search(string searchBy,string seachText)
-        //{
-
-        //    List<Project> projects = null;
-        //    if (searchBy == "ProjectId")
-        //    {
-        //        projects = _context.Projects.Where(temp => temp.ProjectId.ToString().Contains(seachText)).ToList();
-        //    }
-        //    else if (searchBy == "ProjectName")
-        //    {
-        //        projects = _context.Projects.Where(temp => temp.ProjectName.ToString().Contains(seachText)).ToList();
-        //    }
-
-        //    if (searchBy == "DateOfStart")
-        //    {
-        //        projects = _context.Projects.Where(temp => temp.ProjectId.ToString().Contains(seachText)).ToList();
-        //    }
-
-        //    if (searchBy =="TeamSize")
-        //    {
-        //        projects = _context.Projects.Where(temp => temp.ProjectId.ToString().Contains(seachText)).ToList();
-        //    }
-
-        //    return projects;
-        //}
-
-        [HttpGet()]
-        public IActionResult GetProjects()
+        [HttpGet]
+        [Route("api/projects")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public List<Project> Get()
         {
-
-            var projectsFromRepo = _projectRepository.GetAllProjects();
-
-            return Ok(projectsFromRepo);
+            List<Project> projects = db.Projects.ToList();
+            return projects;
         }
 
-        [HttpGet("{projectId}", Name = "GetProject")]
-        public IActionResult GetProject(Guid projectId)
+        [HttpGet]
+        [Route("api/projects/search/{searchby}/{searchtext}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public List<Project> Search(string searchBy, string searchText)
         {
-            var projectFromRepo = _projectRepository.GetProjectData(projectId);
+            List<Project> projects = null;
+            if (searchBy == "ProjectID")
+                projects = db.Projects.Where(temp => temp.ProjectID.ToString().Contains(searchText)).ToList();
+            else if (searchBy == "ProjectName")
+                projects = db.Projects.Where(temp => temp.ProjectName.Contains(searchText)).ToList();
+            if (searchBy == "DateOfStart")
+                projects = db.Projects.Where(temp => temp.DateOfStart.ToString().Contains(searchText)).ToList();
+            if (searchBy == "TeamSize")
+                projects = db.Projects.Where(temp => temp.TeamSize.ToString().Contains(searchText)).ToList();
 
-            if (projectFromRepo == null)
+            return projects;
+        }
+
+        [HttpPost]
+        [Route("api/projects")]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public Project Post([FromBody] Project project)
+        {
+            db.Projects.Add(project);
+            db.SaveChanges();
+            return project;
+        }
+
+        [HttpPut]
+        [Route("api/projects")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public Project Put([FromBody] Project project)
+        {
+            Project existingProject = db.Projects.Where(temp => temp.ProjectID == project.ProjectID).FirstOrDefault();
+            if (existingProject != null)
             {
-                return NotFound();
+                existingProject.ProjectName = project.ProjectName;
+                existingProject.DateOfStart = project.DateOfStart;
+                existingProject.TeamSize = project.TeamSize;
+                db.SaveChanges();
+                return existingProject;
             }
-
-            return Ok(projectFromRepo);
-        }
-
-        [HttpPost()]
-        public IActionResult CreateProject([FromBody] Project projectToAdd)
-        {
-            _projectRepository.AddProject(projectToAdd);
-
-            _projectRepository.Save();
-
-            return CreatedAtRoute("GetProject",
-                new { projectId = projectToAdd.ProjectId },
-                projectToAdd);
-        }
-
-        [HttpDelete("{projectId}")]        
-        public IActionResult DeleteProject(Guid projectId)
-        {
-            var projectFromRepo = _projectRepository.GetProjectData(projectId);
-
-            if (projectFromRepo == null)
+            else
             {
-                return NotFound();
+                return null;
             }
-
-             _projectRepository.DeleteProject(projectId);
-
-            _projectRepository.Save();
-
-            return NoContent();
         }
 
-        [HttpPut("{projectId}")]
-        public IActionResult UpdateProject([FromBody] Project projectForUpdate)
+        [HttpDelete]
+        [Route("api/projects")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public int Delete(int ProjectID)
         {
-            var projectFromRepo = _projectRepository.GetProjectData(projectForUpdate.ProjectId);
-            if (projectFromRepo == null)
+            Project existingProject = db.Projects.Where(temp => temp.ProjectID == ProjectID).FirstOrDefault();
+            if (existingProject != null)
             {
-                return NotFound();
+                db.Projects.Remove(existingProject);
+                db.SaveChanges();
+                return ProjectID;
             }
-            projectFromRepo.ProjectName = projectForUpdate.ProjectName;
-            projectFromRepo.DateOfStart= projectForUpdate.DateOfStart;
-            projectFromRepo.TeamSize = projectForUpdate.TeamSize;
-
-            _projectRepository.UpdateProject(projectFromRepo);
-
-            _projectRepository.Save();
-
-            return NoContent();
+            else
+            {
+                return -1;
+            }
         }
     }
 }
+
+
