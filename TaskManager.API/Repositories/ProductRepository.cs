@@ -2,31 +2,32 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TaskManager.API.Context;
-using TaskManager.API.Models;
+using TaskManager.API.Identity;
 using TaskManager.API.Services;
+using TaskManager.Models;
 
 namespace TaskManager.API.Repositories
 {
 
     public class ProjectRepository : IProjectService, IDisposable
     {
-        readonly TaskManagerDbContext _dbContext;
+        //private readonly TaskManagerDbContext _dbContext;
+        private readonly ApplicationDbContext _dbContext;
 
-        public ProjectRepository(TaskManagerDbContext dbContext)
+        public ProjectRepository(ApplicationDbContext dbContext)
         {
-            _dbContext = dbContext?? throw new ArgumentNullException(nameof(TaskManagerDbContext));
+            _dbContext = dbContext?? throw new ArgumentNullException(nameof(_dbContext));
         }
 
-        public Guid AddProject(Project project)
+        public int AddProject(Project project)
         {
             try
             {
-                project.ProjectId = Guid.NewGuid();
+                
                 _dbContext.Projects.Add(project);
                 _dbContext.SaveChanges();
 
-                return project.ProjectId;
+                return project.ProjectID;
             }
             catch
             {
@@ -34,7 +35,7 @@ namespace TaskManager.API.Repositories
             }
         }
 
-        public string DeleteProject(Guid projectId)
+        public string DeleteProject(int projectId)
         {
             try
             {
@@ -69,11 +70,11 @@ namespace TaskManager.API.Repositories
             }
         }
 
-        public Project GetProjectData(Guid projectId)
+        public Project GetProjectData(int projectId)
         {
             try
             {
-                Project project = _dbContext.Projects.FirstOrDefault(x => x.ProjectId == projectId);
+                Project project = _dbContext.Projects.FirstOrDefault(x => x.ProjectID == projectId);
                 if (project != null)
                 {
                     _dbContext.Entry(project).State = EntityState.Detached;
@@ -88,11 +89,11 @@ namespace TaskManager.API.Repositories
 
         }
 
-        public Guid UpdateProject(Project project)
+        public int UpdateProject(Project project)
         {
             try
             {
-                Project oldProjectData = GetProjectData(project.ProjectId);
+                Project oldProjectData = GetProjectData(project.ProjectID);
 
                 if (oldProjectData.ProjectName != null)
                 {
@@ -105,7 +106,7 @@ namespace TaskManager.API.Repositories
                 _dbContext.Entry(project).State = EntityState.Modified;
                 _dbContext.SaveChanges();
 
-                return new Guid();
+                return new int();
             }
             catch
             {

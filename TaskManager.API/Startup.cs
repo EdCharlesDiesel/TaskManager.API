@@ -10,10 +10,12 @@ using Swashbuckle.AspNetCore.Filters;
 using System;
 using System.IO;
 using System.Reflection;
-using TaskManager.API.Context;
 using TaskManager.API.Identity;
 using TaskManager.API.Repositories;
 using TaskManager.API.Services;
+using Microsoft.IdentityModel.Tokens;
+using TaskManager.Identity;
+using TaskManager.Services;
 
 namespace TaskManager.API
 {
@@ -67,26 +69,54 @@ namespace TaskManager.API
 
 
             var connectionString = Configuration["ConnectionStrings:TaskManagerDbContextDBConnectionString"];
-            services.AddDbContext<TaskManagerDbContext>(o => o.UseSqlServer(connectionString));
+            services.AddDbContext<ApplicationDbContext>(o => o.UseSqlServer(connectionString));
 
             services.AddTransient<IRoleStore<ApplicationRole>, ApplicationRoleStore>();
             services.AddTransient<UserManager<ApplicationUser>, ApplicationUserManager>();
-            services.AddTransient<SignInManager<ApplicationUser>, ApplicationSignInManger>();
+            services.AddTransient<SignInManager<ApplicationUser>, ApplicationSignInManager>();
             services.AddTransient<RoleManager<ApplicationRole>, ApplicationRoleManager>();
             services.AddTransient<IUserStore<ApplicationUser>, ApplicationUserStore>();
-            services.AddTransient<IUsersService, UsersService>();
+            services.AddTransient<IUsersService, UsersService>();            
 
-            services.AddIdentity<ApplicationUser, ApplicationRole>()
+
+           services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddUserStore<ApplicationUserStore>()
                 .AddUserManager<ApplicationUserManager>()
                 .AddRoleManager<ApplicationRoleManager>()
-                .AddSignInManager<ApplicationSignInManger>()
+                .AddSignInManager<ApplicationSignInManager>()
                 .AddRoleStore<ApplicationRoleStore>()
                 .AddDefaultTokenProviders();
 
             services.AddScoped<ApplicationRoleStore>();
             services.AddScoped<ApplicationUserStore>();
+
+            //Configure JWT Authentication
+            var appSettingsSection = Configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(appSettingsSection);
+            var appSettings = appSettingsSection.Get<AppSettings>();
+            var key = System.Text.Encoding.ASCII.GetBytes(appSettings.Secret);
+            services.AddAuthentication(x =>
+            {
+                //x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                //x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddCookie()
+            .AddJwtBearer(x => {
+                x.RequireHttpsMetadata = false;
+                x.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
+
+            services.AddAntiforgery(options => {
+                options.Cookie.Name = "XSRF-Cookie-TOKEN";
+                options.HeaderName = "X-XSRF-TOKEN";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -100,46 +130,7 @@ namespace TaskManager.API
             app.UseAuthentication();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseRouting();
-
-            IServiceScopeFactory serviceScopeFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
-            using (IServiceScope scope = serviceScopeFactory.CreateScope())
-            {
-                var roleManger = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
-                var userManger = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-
-                //Create Admin Role
-                if (!await roleManger.RoleExistsAsync("Admin"))
-                {
-                    var role = new ApplicationRole();
-                    role.Name = "Admin";
-                    await roleManger.CreateAsync(role);
-                }
-
-                //Create Admin user
-                if (await userManger.FindByNameAsync("admin")== null)
-                {
-                    var user = new ApplicationUser();
-                    user.UserName = "admin";
-                    user.Email = "admin@gmail.com";
-                    var userPassword = "Admin123#";
-                    var checkUser = await userManger.CreateAsync(user, userPassword);
-                    
-                    if (checkUser.Succeeded)
-                    {
-                        await userManger.AddToRoleAsync(user, "Admin");
-                    }
-                }
-
-                //Create Employee Role
-                if (!await roleManger.RoleExistsAsync("Admin"))
-                {
-                    var role = new ApplicationRole();
-                    role.Name = "Admin";
-                    await roleManger.CreateAsync(role);
-                }
-
-            }
+            app.UseRouting();           
 
             app.UseSwagger();
 
@@ -163,6 +154,47 @@ namespace TaskManager.API
             app.UseAuthorization();
 
             app.UseAuthentication();
+            IServiceScopeFactory serviceScopeFactory = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>();
+
+            using (IServiceScope scope = serviceScopeFactory.CreateScope())
+            {
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+                //Create Admin Role
+                if (!(await roleManager.RoleExistsAsync("Admin")))
+                {
+                    var role = new ApplicationRole();
+                    role.Name = "Admin";
+                    await roleManager.CreateAsync(role);
+                }
+
+                //Create Admin User
+                if ((await userManager.FindByNameAsync("admin")) == null)
+                {
+                    var user = new ApplicationUser();
+                    user.UserName = "admin";
+                    user.Email = "admin@gmail.com";
+                    var userPassword = "Admin123#";
+                    var chkUser = await userManager.CreateAsync(user, userPassword);
+                    if (chkUser.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(user, "Admin");
+                    }
+                }
+                if (!(await userManager.IsInRoleAsync(await userManager.FindByNameAsync("admin"), "Admin")))
+                {
+                    await userManager.AddToRoleAsync(await userManager.FindByNameAsync("admin"), "Admin");
+                }
+
+                //Create Employee Role
+                if (!(await roleManager.RoleExistsAsync("Employee")))
+                {
+                    var role = new ApplicationRole();
+                    role.Name = "Employee";
+                    await roleManager.CreateAsync(role);
+                }
+            }
 
             app.UseEndpoints(endpoints =>
             {

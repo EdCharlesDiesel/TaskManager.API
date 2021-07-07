@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
-using TaskManager.API.Models;
+using TaskManager.Models;
 
 namespace TaskManager.API.Context
 {
@@ -17,7 +17,8 @@ namespace TaskManager.API.Context
             modelBuilder.Entity<Project>().HasData(
                 new Project
                 {
-                    ProjectId = new Guid("922388FD-0461-4CB9-B9CB-A3A0CC21036C"),
+                    //ProjectId = new Guid("922388FD-0461-4CB9-B9CB-A3A0CC21036C"),
+                    ProjectID = 1,
                     ProjectName = "Project A",
                     DateOfStart = DateTime.Now,
                     TeamSize = 5

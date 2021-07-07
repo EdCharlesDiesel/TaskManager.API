@@ -2,7 +2,7 @@
 using TaskManager.Identity;
 using TaskManager.ViewModels;
 
-namespace TaskManager.API.Services
+namespace TaskManager.ServiceContracts
 {
     public interface IUsersService
     {
