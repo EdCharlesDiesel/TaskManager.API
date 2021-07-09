@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TaskManager.API.Identity;
 using TaskManager.API.Services;
+using TaskManager.Identity;
 using TaskManager.Models;
 
 namespace TaskManager.API.Repositories

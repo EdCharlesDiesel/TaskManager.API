@@ -10,12 +10,12 @@ using Swashbuckle.AspNetCore.Filters;
 using System;
 using System.IO;
 using System.Reflection;
-using TaskManager.API.Identity;
 using TaskManager.API.Repositories;
 using TaskManager.API.Services;
 using Microsoft.IdentityModel.Tokens;
 using TaskManager.Identity;
 using TaskManager.Services;
+using TaskManager.ServiceContracts;
 
 namespace TaskManager.API
 {
@@ -41,31 +41,36 @@ namespace TaskManager.API
             });
             services.AddTransient<IProjectService, ProjectRepository>();
 
-            services.AddSwaggerGen(setupAction =>
+            services.AddSwaggerGen(c =>
             {
-                setupAction.SwaggerDoc("TaskManagerAPISpecification", new OpenApiInfo()
-                {
-                    Title = "Task Manager API V1.0",
-                    Version = "1.0",
-                    Description = "API for Task Manager created with ASP.NET Core 5.0",
-                    Contact = new OpenApiContact()
-                    {
-                        Email = "Mokhetkc@hotmail.com",
-                        Name = "Khotso Mokhethi",
-                        Url = new Uri("https://wwww.github.com/EdCharlesDiesel")
-                    }
-                });
-
-
-                setupAction.OperationFilter<SecurityRequirementsOperationFilter>();
-
-
-                var xmlCommentsFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-
-                var xmlCommentsFullPath = Path.Combine(AppContext.BaseDirectory, xmlCommentsFile);
-
-                // setupAction.IncludeXmlComments(xmlCommentsFullPath);
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "TaskManager", Version = "v1" });
             });
+
+            //services.AddSwaggerGen(setupAction =>
+            //{
+            //    setupAction.SwaggerDoc("TaskManagerAPISpecification", new OpenApiInfo()
+            //    {
+            //        Title = "Task Manager API V1.0",
+            //        Version = "1.0",
+            //        Description = "API for Task Manager created with ASP.NET Core 5.0",
+            //        Contact = new OpenApiContact()
+            //        {
+            //            Email = "Mokhetkc@hotmail.com",
+            //            Name = "Khotso Mokhethi",
+            //            Url = new Uri("https://wwww.github.com/EdCharlesDiesel")
+            //        }
+            //    });
+
+
+            //    setupAction.OperationFilter<SecurityRequirementsOperationFilter>();
+
+
+            //    var xmlCommentsFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+
+            //    var xmlCommentsFullPath = Path.Combine(AppContext.BaseDirectory, xmlCommentsFile);
+
+            //    // setupAction.IncludeXmlComments(xmlCommentsFullPath);
+            //});
 
 
             var connectionString = Configuration["ConnectionStrings:TaskManagerDbContextDBConnectionString"];
@@ -76,10 +81,9 @@ namespace TaskManager.API
             services.AddTransient<SignInManager<ApplicationUser>, ApplicationSignInManager>();
             services.AddTransient<RoleManager<ApplicationRole>, ApplicationRoleManager>();
             services.AddTransient<IUserStore<ApplicationUser>, ApplicationUserStore>();
-            services.AddTransient<IUsersService, UsersService>();            
+            services.AddTransient<IUsersService, UsersService>();
 
-
-           services.AddIdentity<ApplicationUser, ApplicationRole>()
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddUserStore<ApplicationUserStore>()
                 .AddUserManager<ApplicationUserManager>()
@@ -126,27 +130,29 @@ namespace TaskManager.API
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseAuthentication();
+                        
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseStaticFiles();
-            app.UseRouting();           
-
+            app.UseRouting();
             app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TaskManager v1"));
 
-            app.UseSwaggerUI(setupAction =>
-            {
-                setupAction.SwaggerEndpoint("/swagger/TaskManagerAPISpecification/swagger.json", "TaskManager API V1.0");
+            //app.UseSwagger();
 
-                setupAction.RoutePrefix = "";
+            //app.UseSwaggerUI(setupAction =>
+            //{
+            //    setupAction.SwaggerEndpoint("/swagger/TaskManagerAPISpecification/swagger.json", "TaskManager API V1.0");
 
-                setupAction.DefaultModelExpandDepth(2);
-                setupAction.DefaultModelRendering(Swashbuckle.AspNetCore.SwaggerUI.ModelRendering.Model);
-                setupAction.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
+            //    setupAction.RoutePrefix = "";
 
-                setupAction.EnableDeepLinking();
-                setupAction.DisplayOperationId();
-            });
+            //    setupAction.DefaultModelExpandDepth(2);
+            //    setupAction.DefaultModelRendering(Swashbuckle.AspNetCore.SwaggerUI.ModelRendering.Model);
+            //    setupAction.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
+
+            //    setupAction.EnableDeepLinking();
+            //    setupAction.DisplayOperationId();
+            //});
 
             // Enable CORS
             app.UseCors("TaskManagerPolicy");
