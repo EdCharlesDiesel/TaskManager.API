@@ -1,29 +1,84 @@
-﻿using System;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-using TaskManager.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
+using TaskManager.API.Authentication;
+using TaskManager.API.Models;
 
-namespace TaskManager.Identity
+namespace TaskManager.API.Contexts
 {
-    public partial class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class TaskManagerDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions options) : base(options)
+        public TaskManagerDbContext(DbContextOptions options) : base(options)
         {
+
         }
 
         public DbSet<ClientLocation> ClientLocations { get; set; }
         public DbSet<Project> Projects { get; set; }
-        public DbSet<ApplicationRole> ApplicationRoles { get; set; }
         public DbSet<Country> Countries { get; set; }
         public DbSet<Skill> Skills { get; set; }
         public DbSet<TaskPriority> TaskPriorities { get; set; }
-        public DbSet<TaskStatus> TaskStatuses { get; set; }
-        public DbSet<Task> Tasks { get; set; }
+        public DbSet<TaskManager.API.Models.TaskStatus> TaskStatuses { get; set; }
+        public DbSet<TaskManager.API.Models.Task> Tasks { get; set; }
         public DbSet<TaskStatusDetail> TaskStatusDetails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<UserMaster>(entity =>
+            {
+                entity.HasKey(e => e.UserId)
+                    .HasName("PK__UserMasterID");
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
+
+                entity.Property(e => e.FirstName)
+
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LastName)
+
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+                entity.Property(e => e.EmailAddress);
+
+
+                entity.Property(e => e.PasswordHash);
+                entity.Property(e => e.PasswordSalt);
+
+
+                entity.Property(e => e.UserTypeId).HasColumnName("UserTypeID");
+
+                entity.Property(e => e.Username)
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<UserType>(entity =>
+            {
+                entity.Property(e => e.UserTypeId).HasColumnName("UserTypeID");
+
+                entity.Property(e => e.UserTypeName)
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<UserType>().HasData(new UserType
+            {
+                UserTypeId = 1,
+                UserTypeName = "Admin"
+            }, new UserType{
+                UserTypeId = 2,
+                UserTypeName = "Employee"
+            });
+
+            modelBuilder.Entity<ClientLocation>(entyity =>
+            {
+                entyity.HasKey(e => e.ClientLocationID);
+            });
 
             modelBuilder.Entity<ClientLocation>().HasData(
                 new ClientLocation() { ClientLocationID = 1, ClientLocationName = "Boston" },
@@ -34,10 +89,20 @@ namespace TaskManager.Identity
                 new ClientLocation() { ClientLocationID = 6, ClientLocationName = "Tokyo" }
             );
 
+            modelBuilder.Entity<Project>(entyity =>
+            {
+                entyity.HasKey(e => e.ProjectID);
+            });
+
             modelBuilder.Entity<Project>().HasData(
                 new Project() { ProjectID = 1, ProjectName = "Hospital Management System", DateOfStart = Convert.ToDateTime("2017-8-1"), Active = true, ClientLocationID = 2, Status = "In Force", TeamSize = 14 },
                 new Project() { ProjectID = 2, ProjectName = "Reporting Tool", DateOfStart = Convert.ToDateTime("2018-3-16"), Active = true, ClientLocationID = 1, Status = "Support", TeamSize = 81 }
             );
+
+            modelBuilder.Entity<Country>(entyity =>
+            {
+                entyity.HasKey(e => e.CountryID);
+            });
 
             modelBuilder.Entity<Country>().HasData(
                 new Country() { CountryID = 1, CountryName = "China" },
@@ -236,6 +301,11 @@ namespace TaskManager.Identity
                 new Country() { CountryID = 194, CountryName = "India" }
             );
 
+            modelBuilder.Entity<TaskPriority>(entyity =>
+            {
+                entyity.HasKey(e => e.TaskPriorityID);
+            });
+
             modelBuilder.Entity<TaskPriority>().HasData(
                 new TaskPriority() { TaskPriorityID = 1, TaskPriorityName = "Urgent" },
                 new TaskPriority() { TaskPriorityID = 2, TaskPriorityName = "Normal" },
@@ -243,15 +313,28 @@ namespace TaskManager.Identity
                 new TaskPriority() { TaskPriorityID = 4, TaskPriorityName = "Low" }
              );
 
-            modelBuilder.Entity<TaskStatus>().HasData(
-                new TaskStatus() { TaskStatusID = 1, TaskStatusName = "Holding" }, //Tasks that need to be documented still
-                new TaskStatus() { TaskStatusID = 2, TaskStatusName = "Prioritized" }, //Tasks that are placed in priority order; so need to start ASAP
-                new TaskStatus() { TaskStatusID = 3, TaskStatusName = "Started" }, //Tasks that are currently working
-                new TaskStatus() { TaskStatusID = 4, TaskStatusName = "Finished" }, //Tasks that are finished workng
-                new TaskStatus() { TaskStatusID = 5, TaskStatusName = "Reverted" } //Tasks that are reverted back, with comments or issues
+            modelBuilder.Entity<TaskManager.API.Models.TaskStatus>(entyity =>
+            {
+                entyity.HasKey(e => e.TaskStatusID);
+            });
+
+            modelBuilder.Entity<TaskManager.API.Models.TaskStatus>().HasData(
+                new TaskManager.API.Models.TaskStatus() { TaskStatusID = 1, TaskStatusName = "Holding" }, //Tasks that need to be documented still
+                new TaskManager.API.Models.TaskStatus() { TaskStatusID = 2, TaskStatusName = "Prioritized" }, //Tasks that are placed in priority order; so need to start ASAP
+                new TaskManager.API.Models.TaskStatus() { TaskStatusID = 3, TaskStatusName = "Started" }, //Tasks that are currently working
+                new TaskManager.API.Models.TaskStatus() { TaskStatusID = 4, TaskStatusName = "Finished" }, //Tasks that are finished workng
+                new TaskManager.API.Models.TaskStatus() { TaskStatusID = 5, TaskStatusName = "Reverted" } //Tasks that are reverted back, with comments or issues
              );
+
+            //modelBuilder.Entity<TaskManager.API.Models.Task>().HasData(
+            //     new TaskManager.API.Models.Task() { 
+            //         TaskID = 1,
+            //         TaskPriorityID =1,
+            //         ProjectID = 1,}
+            //    );
         }
     }
 }
+
 
 

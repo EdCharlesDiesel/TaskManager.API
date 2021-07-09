@@ -1,8 +1,8 @@
-﻿using TaskManager.Identity;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TaskManager.API.Authentication;
 
-namespace TaskManager.Models
+namespace TaskManager.API.Models
 {
     public class Skill
     {
@@ -13,7 +13,7 @@ namespace TaskManager.Models
         public string Id { get; set; }
 
         [ForeignKey("Id")]
-        public virtual ApplicationUser ApplicationUser { get; set; }
+        public virtual UserMaster ApplicationUser { get; set; }
     }
 }
 

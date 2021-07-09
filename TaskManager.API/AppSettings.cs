@@ -1,4 +1,4 @@
-﻿namespace TaskManager
+﻿namespace TaskManager.API
 {
     public class AppSettings
     {

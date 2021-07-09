@@ -1,9 +1,9 @@
-﻿using TaskManager.Identity;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TaskManager.API.Authentication;
 
-namespace TaskManager.Models
+namespace TaskManager.API.Models
 {
     public class TaskStatusDetail
     {
@@ -22,7 +22,7 @@ namespace TaskManager.Models
         public virtual TaskStatus TaskStatus { get; set; }
 
         [ForeignKey("UserID")]
-        public virtual ApplicationUser User { get; set; }
+        public virtual UserMaster User { get; set; }
     }
 }
 

@@ -1,6 +1,6 @@
-﻿using TaskManager.Models;
+﻿using TaskManager.API.Models;
 
-namespace TaskManager.ViewModels
+namespace TaskManager.API.ViewModels
 {
     public class ProjectViewModel
     {

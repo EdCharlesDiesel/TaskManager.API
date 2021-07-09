@@ -1,7 +1,7 @@
-﻿using TaskManager.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using TaskManager.API.Models;
 
-namespace TaskManager.ViewModels
+namespace TaskManager.API.ViewModels
 {
     public class SignUpViewModel
     {

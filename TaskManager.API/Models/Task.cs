@@ -1,10 +1,10 @@
-﻿using TaskManager.Identity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TaskManager.API.Authentication;
 
-namespace TaskManager.Models
+namespace TaskManager.API.Models
 {
     public class Task
     {
@@ -31,10 +31,10 @@ namespace TaskManager.Models
         public virtual Project Project { get; set; }
 
         [ForeignKey("CreatedBy")]
-        public virtual ApplicationUser CreatedByUser { get; set; }
+        public virtual UserMaster CreatedByUser { get; set; }
 
         [ForeignKey("AssignedTo")]
-        public virtual ApplicationUser AssignedToUser { get; set; }
+        public virtual UserMaster AssignedToUser { get; set; }
 
         [ForeignKey("TaskPriorityID")]
         public virtual TaskPriority TaskPriority { get; set; }

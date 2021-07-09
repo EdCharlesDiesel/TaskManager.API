@@ -1,25 +1,25 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using TaskManager.Identity;
-using TaskManager.Models;
+using TaskManager.API.Contexts;
+using TaskManager.API.Models;
 
-namespace TaskManager.Controllers
+namespace TaskManager.API.Controllers
 {
+    [Produces("application/json")]
+    [Route("api/[controller]")]
     public class ClientLocationsController : Controller
     {
-        private ApplicationDbContext db;
+        private TaskManagerDbContext db;
 
-        public ClientLocationsController(ApplicationDbContext db)
+        public ClientLocationsController(TaskManagerDbContext db)
         {
             this.db = db;
         }
 
         [HttpGet]
         [Route("api/clientlocations")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult Get()
         {
             List<ClientLocation> clientLocations = db.ClientLocations.ToList();
@@ -28,7 +28,7 @@ namespace TaskManager.Controllers
 
         [HttpGet]
         [Route("api/clientlocations/searchbyclientlocationid/{ClientLocationID}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult GetByClientLocationID(int ClientLocationID)
         {
             ClientLocation clientLocation = db.ClientLocations.Where(temp => temp.ClientLocationID == ClientLocationID).FirstOrDefault();
@@ -42,7 +42,7 @@ namespace TaskManager.Controllers
 
         [HttpPost]
         [Route("api/clientlocations")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public ClientLocation Post([FromBody] ClientLocation clientLocation)
         {
             db.ClientLocations.Add(clientLocation);
@@ -54,7 +54,7 @@ namespace TaskManager.Controllers
 
         [HttpPut]
         [Route("api/clientlocations")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public ClientLocation Put([FromBody] ClientLocation project)
         {
             ClientLocation existingClientLocation = db.ClientLocations.Where(temp => temp.ClientLocationID == project.ClientLocationID).FirstOrDefault();
@@ -72,7 +72,7 @@ namespace TaskManager.Controllers
 
         [HttpDelete]
         [Route("api/clientlocations")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public int Delete(int ClientLocationID)
         {
             ClientLocation existingClientLocation = db.ClientLocations.Where(temp => temp.ClientLocationID == ClientLocationID).FirstOrDefault();
@@ -89,5 +89,4 @@ namespace TaskManager.Controllers
         }
     }
 }
-
 

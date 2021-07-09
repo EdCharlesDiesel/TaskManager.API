@@ -1,27 +1,25 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TaskManager.Identity;
-using TaskManager.Models;
-using TaskManager.ViewModels;
+using System.Collections.Generic;
+using System.Linq;
+using TaskManager.API.Contexts;
+using TaskManager.API.Models;
+using TaskManager.API.ViewModels;
 
-namespace TaskManager.Controllers
+namespace TaskManager.API.Controllers
 {
     public class ProjectsController : Controller
     {
-        private ApplicationDbContext db;
+        private TaskManagerDbContext db;
 
-        public ProjectsController(ApplicationDbContext db)
+        public ProjectsController(TaskManagerDbContext db)
         {
             this.db = db;
         }
 
         [HttpGet]
         [Route("api/projects")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult Get()
         {
             //System.Threading.Thread.Sleep(1000);
@@ -37,7 +35,7 @@ namespace TaskManager.Controllers
 
         [HttpGet]
         [Route("api/projects/search/{searchby}/{searchtext}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult Search(string searchBy, string searchText)
         {
             List<Project> projects = null;
@@ -61,7 +59,7 @@ namespace TaskManager.Controllers
 
         [HttpGet]
         [Route("api/projects/searchbyprojectid/{ProjectID}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult GetProjectByProject(int ProjectID)
         {
             Project project = db.Projects.Include("ClientLocation").Where(temp => temp.ProjectID == ProjectID).FirstOrDefault();
@@ -76,7 +74,7 @@ namespace TaskManager.Controllers
 
         [HttpPost]
         [Route("api/projects")]
-        [Authorize]
+        //[Authorize]
         [ValidateAntiForgeryToken]
         public IActionResult Post([FromBody] Project project)
         {
@@ -92,7 +90,7 @@ namespace TaskManager.Controllers
 
         [HttpPut]
         [Route("api/projects")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult Put([FromBody] Project project)
         {
             Project existingProject = db.Projects.Where(temp => temp.ProjectID == project.ProjectID).FirstOrDefault();
@@ -119,7 +117,7 @@ namespace TaskManager.Controllers
 
         [HttpDelete]
         [Route("api/projects")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public int Delete(int ProjectID)
         {
             Project existingProject = db.Projects.Where(temp => temp.ProjectID == ProjectID).FirstOrDefault();
@@ -136,5 +134,3 @@ namespace TaskManager.Controllers
         }
     }
 }
-
-

@@ -1,25 +1,23 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using TaskManager.Identity;
-using TaskManager.Models;
+using TaskManager.API.Contexts;
+using TaskManager.API.Models;
 
-namespace TaskManager.Controllers
+namespace TaskManager.API.Controllers
 {
     public class TaskPrioritiesController : Controller
     {
-        private ApplicationDbContext db;
+        private TaskManagerDbContext db;
 
-        public TaskPrioritiesController(ApplicationDbContext db)
+        public TaskPrioritiesController(TaskManagerDbContext db)
         {
             this.db = db;
         }
 
         [HttpGet]
         [Route("api/taskpriorities")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public List<TaskPriority> Get()
         {
             List<TaskPriority> taskPriorities = db.TaskPriorities.ToList();
@@ -28,7 +26,7 @@ namespace TaskManager.Controllers
 
         [HttpGet]
         [Route("api/taskpriorities/searchbytaskpriorityid/{TaskPriorityID}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult GetByTaskPriorityID(int TaskPriorityID)
         {
             TaskPriority taskPriority = db.TaskPriorities.Where(temp => temp.TaskPriorityID == TaskPriorityID).FirstOrDefault();
@@ -42,7 +40,7 @@ namespace TaskManager.Controllers
 
         [HttpPost]
         [Route("api/taskpriorities")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public TaskPriority Post([FromBody] TaskPriority taskPriority)
         {
             db.TaskPriorities.Add(taskPriority);
@@ -54,7 +52,7 @@ namespace TaskManager.Controllers
 
         [HttpPut]
         [Route("api/taskpriorities")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public TaskPriority Put([FromBody] TaskPriority project)
         {
             TaskPriority existingTaskPriority = db.TaskPriorities.Where(temp => temp.TaskPriorityID == project.TaskPriorityID).FirstOrDefault();
@@ -70,22 +68,27 @@ namespace TaskManager.Controllers
             }
         }
 
-        [HttpDelete]
-        [Route("api/taskpriorities")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public int Delete(int TaskPriorityID)
-        {
-            TaskPriority existingTaskPriority = db.TaskPriorities.Where(temp => temp.TaskPriorityID == TaskPriorityID).FirstOrDefault();
-            if (existingTaskPriority != null)
-            {
-                db.TaskPriorities.Remove(existingTaskPriority);
-                db.SaveChanges();
-                return TaskPriorityID;
-            }
-            else
-            {
-                return -1;
-            }
-        }
+        //[HttpDelete]
+        //[Route("api/taskpriorities")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //public int Delete(int TaskPriorityID)
+        //{
+
+        //}
+        //public int IActionResult Index()
+        //{
+        //    TaskPriority existingTaskPriority = db.TaskPriorities.Where(temp => temp.TaskPriorityID == TaskPriorityID).FirstOrDefault();
+        //    if (existingTaskPriority != null)
+        //    {
+        //        db.TaskPriorities.Remove(existingTaskPriority);
+        //        db.SaveChanges();
+        //        return TaskPriorityID;
+        //    }
+        //    else
+        //    {
+        //        return -1;
+        //    }
+        //    return View();
+        //}
     }
 }

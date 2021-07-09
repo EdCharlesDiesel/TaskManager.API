@@ -1,4 +1,4 @@
-﻿namespace TaskManager.ViewModels
+﻿namespace TaskManager.API.ViewModels
 {
     public class LoginViewModel
     {

@@ -1,18 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TaskManager.Identity;
-using TaskManager.Models;
+using TaskManager.API.Contexts;
+using TaskManager.API.Models;
 
-namespace TaskManager.Controllers
+namespace TaskManager.API.Controllers
 {
     public class CountriesController : Controller
     {
-        private readonly ApplicationDbContext db;
+        private readonly TaskManagerDbContext db;
 
-        public CountriesController(ApplicationDbContext db)
+        public CountriesController(TaskManagerDbContext db)
         {
             this.db = db;
         }
@@ -39,53 +37,53 @@ namespace TaskManager.Controllers
                 return NoContent();
         }
 
-        [HttpPost]
-        [Route("api/countries")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public Country Post([FromBody] Country country)
-        {
-            db.Countries.Add(country);
-            db.SaveChanges();
+        //[HttpPost]
+        //[Route("api/countries")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //public Country Post([FromBody] Country country)
+        //{
+        //    db.Countries.Add(country);
+        //    db.SaveChanges();
 
-            Country existingCountry = db.Countries.Where(temp => temp.CountryID == country.CountryID).FirstOrDefault();
-            return existingCountry;
-        }
+        //    Country existingCountry = db.Countries.Where(temp => temp.CountryID == country.CountryID).FirstOrDefault();
+        //    return existingCountry;
+        //}
 
-        [HttpPut]
-        [Route("api/countries")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public Country Put([FromBody] Country country)
-        {
-            Country existingCountry = db.Countries.Where(temp => temp.CountryID == country.CountryID).FirstOrDefault();
-            if (existingCountry != null)
-            {
-                existingCountry.CountryName = country.CountryName;
-                db.SaveChanges();
-                return existingCountry;
-            }
-            else
-            {
-                return null;
-            }
-        }
+        //[HttpPut]
+        //[Route("api/countries")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //public Country Put([FromBody] Country country)
+        //{
+        //    Country existingCountry = db.Countries.Where(temp => temp.CountryID == country.CountryID).FirstOrDefault();
+        //    if (existingCountry != null)
+        //    {
+        //        existingCountry.CountryName = country.CountryName;
+        //        db.SaveChanges();
+        //        return existingCountry;
+        //    }
+        //    else
+        //    {
+        //        return null;
+        //    }
+        //}
 
-        [HttpDelete]
-        [Route("api/countries")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public int Delete(int CountryID)
-        {
-            Country existingCountry = db.Countries.Where(temp => temp.CountryID == CountryID).FirstOrDefault();
-            if (existingCountry != null)
-            {
-                db.Countries.Remove(existingCountry);
-                db.SaveChanges();
-                return CountryID;
-            }
-            else
-            {
-                return -1;
-            }
-        }
+        //[HttpDelete]
+        //[Route("api/countries")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //public int Delete(int CountryID)
+        //{
+        //    Country existingCountry = db.Countries.Where(temp => temp.CountryID == CountryID).FirstOrDefault();
+        //    if (existingCountry != null)
+        //    {
+        //        db.Countries.Remove(existingCountry);
+        //        db.SaveChanges();
+        //        return CountryID;
+        //    }
+        //    else
+        //    {
+        //        return -1;
+        //    }
+        //}
     }
 }
 

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace TaskManager.Models
+namespace TaskManager.API.Models
 {
     public class Project
     {

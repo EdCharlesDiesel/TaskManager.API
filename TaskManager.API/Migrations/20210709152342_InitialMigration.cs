@@ -3,56 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace TaskManager.API.Migrations
 {
-    public partial class Initial_Migration : Migration
+    public partial class InitialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "AspNetRoles",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUsers",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CountryID = table.Column<int>(type: "int", nullable: false),
-                    ReceiveNewsLetters = table.Column<bool>(type: "bit", nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "ClientLocations",
                 columns: table => new
@@ -105,130 +59,39 @@ namespace TaskManager.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetRoleClaims",
+                name: "UserMaster",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    UserID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FirstName = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
+                    LastName = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
+                    EmailAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Username = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false),
+                    PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    UserTypeID = table.Column<int>(type: "int", nullable: false),
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CountryID = table.Column<int>(type: "int", nullable: false),
+                    ReceiveNewsLetters = table.Column<bool>(type: "bit", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__UserMasterID", x => x.UserID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserType",
+                columns: table => new
+                {
+                    UserTypeID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    UserTypeName = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUserClaims",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetUserClaims_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUserLogins",
-                columns: table => new
-                {
-                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
-                    table.ForeignKey(
-                        name: "FK_AspNetUserLogins_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUserRoles",
-                columns: table => new
-                {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
-                    table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUserTokens",
-                columns: table => new
-                {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
-                    table.ForeignKey(
-                        name: "FK_AspNetUserTokens_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Skills",
-                columns: table => new
-                {
-                    SkillID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    SkillName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SkillLevel = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Skills", x => x.SkillID);
-                    table.ForeignKey(
-                        name: "FK_Skills_AspNetUsers_Id",
-                        column: x => x.Id,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                    table.PrimaryKey("PK_UserType", x => x.UserTypeID);
                 });
 
             migrationBuilder.CreateTable(
@@ -255,6 +118,27 @@ namespace TaskManager.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Skills",
+                columns: table => new
+                {
+                    SkillID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SkillName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SkillLevel = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Skills", x => x.SkillID);
+                    table.ForeignKey(
+                        name: "FK_Skills_UserMaster_Id",
+                        column: x => x.Id,
+                        principalTable: "UserMaster",
+                        principalColumn: "UserID",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Tasks",
                 columns: table => new
                 {
@@ -275,18 +159,6 @@ namespace TaskManager.API.Migrations
                 {
                     table.PrimaryKey("PK_Tasks", x => x.TaskID);
                     table.ForeignKey(
-                        name: "FK_Tasks_AspNetUsers_AssignedTo",
-                        column: x => x.AssignedTo,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Tasks_AspNetUsers_CreatedBy",
-                        column: x => x.CreatedBy,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_Tasks_Projects_ProjectID",
                         column: x => x.ProjectID,
                         principalTable: "Projects",
@@ -298,6 +170,18 @@ namespace TaskManager.API.Migrations
                         principalTable: "TaskPriorities",
                         principalColumn: "TaskPriorityID",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Tasks_UserMaster_AssignedTo",
+                        column: x => x.AssignedTo,
+                        principalTable: "UserMaster",
+                        principalColumn: "UserID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Tasks_UserMaster_CreatedBy",
+                        column: x => x.CreatedBy,
+                        principalTable: "UserMaster",
+                        principalColumn: "UserID",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -316,12 +200,6 @@ namespace TaskManager.API.Migrations
                 {
                     table.PrimaryKey("PK_TaskStatusDetails", x => x.TaskStatusDetailID);
                     table.ForeignKey(
-                        name: "FK_TaskStatusDetails_AspNetUsers_UserID",
-                        column: x => x.UserID,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_TaskStatusDetails_Tasks_TaskID",
                         column: x => x.TaskID,
                         principalTable: "Tasks",
@@ -333,6 +211,12 @@ namespace TaskManager.API.Migrations
                         principalTable: "TaskStatuses",
                         principalColumn: "TaskStatusID",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TaskStatusDetails_UserMaster_UserID",
+                        column: x => x.UserID,
+                        principalTable: "UserMaster",
+                        principalColumn: "UserID",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.InsertData(
@@ -353,30 +237,32 @@ namespace TaskManager.API.Migrations
                 columns: new[] { "CountryID", "CountryName" },
                 values: new object[,]
                 {
+                    { 98, "Bulgaria" },
+                    { 132, "Uruguay" },
+                    { 131, "Panama" },
+                    { 130, "Mauritania" },
+                    { 129, "Liberia" },
                     { 126, "Bosnia and Herzegovina" },
                     { 127, "Kuwait" },
-                    { 128, "Moldova" },
-                    { 129, "Liberia" },
-                    { 130, "Mauritania" },
-                    { 131, "Panama" },
-                    { 132, "Uruguay" },
                     { 133, "Armenia" },
-                    { 134, "Lithuania" },
-                    { 135, "Albania" },
-                    { 138, "Jamaica" },
-                    { 137, "Mongolia" },
                     { 125, "Croatia" },
+                    { 128, "Moldova" },
+                    { 134, "Lithuania" },
+                    { 137, "Mongolia" },
+                    { 136, "Oman" },
+                    { 124, "Palestine" },
+                    { 138, "Jamaica" },
                     { 139, "Lesotho" },
                     { 140, "Namibia" },
                     { 141, "Macedonia" },
                     { 142, "Slovenia" },
                     { 143, "Latvia" },
                     { 144, "Botswana" },
-                    { 145, "Qatar" },
-                    { 136, "Oman" },
-                    { 124, "Palestine" },
+                    { 135, "Albania" },
+                    { 123, "Lebanon" },
+                    { 119, "Ireland" },
                     { 121, "New Zealand" },
-                    { 122, "Republic of the Congo" },
+                    { 100, "Papua New Guinea" },
                     { 101, "Paraguay" },
                     { 102, "Laos" },
                     { 103, "Libya" },
@@ -386,9 +272,7 @@ namespace TaskManager.API.Migrations
                     { 107, "El Salvador" },
                     { 108, "Nicaragua" },
                     { 109, "Eritrea" },
-                    { 110, "Denmark" },
-                    { 111, "Kyrgyzstan" },
-                    { 112, "Slovakia" }
+                    { 110, "Denmark" }
                 });
 
             migrationBuilder.InsertData(
@@ -396,19 +280,21 @@ namespace TaskManager.API.Migrations
                 columns: new[] { "CountryID", "CountryName" },
                 values: new object[,]
                 {
+                    { 111, "Kyrgyzstan" },
+                    { 112, "Slovakia" },
                     { 113, "Finland" },
                     { 114, "Singapore" },
                     { 115, "Turkmenistan" },
                     { 116, "Norway" },
                     { 117, "Costa Rica" },
                     { 118, "Central African Republic" },
-                    { 119, "Ireland" },
+                    { 145, "Qatar" },
                     { 120, "Georgia" },
+                    { 122, "Republic of the Congo" },
                     { 146, "Gambia" },
-                    { 123, "Lebanon" },
-                    { 147, "Gabon" },
                     { 150, "Estonia" },
-                    { 149, "Trinidad and Tobago" },
+                    { 148, "Guinea-Bissau" },
+                    { 174, "Barbados" },
                     { 175, "Vanuatu" },
                     { 176, "Samoa" },
                     { 177, "Saint Lucia" },
@@ -418,8 +304,8 @@ namespace TaskManager.API.Migrations
                     { 181, "Federated States of Micronesia" },
                     { 182, "Saint Vincent and the Grenadines" },
                     { 183, "Seychelles" },
-                    { 174, "Barbados" },
                     { 184, "Antigua and Barbuda" },
+                    { 185, "Andorra" },
                     { 186, "Dominica" },
                     { 187, "Liechtenstein" },
                     { 188, "Monaco" },
@@ -429,15 +315,13 @@ namespace TaskManager.API.Migrations
                     { 192, "Nauru" },
                     { 193, "Vatican City" },
                     { 194, "India" },
-                    { 185, "Andorra" },
                     { 173, "Belize" },
+                    { 147, "Gabon" },
                     { 172, "Iceland" },
-                    { 171, "Maldives" },
-                    { 100, "Papua New Guinea" },
-                    { 151, "Mauritius" },
-                    { 152, "Swaziland" },
-                    { 153, "Bahrain" },
-                    { 154, "Timor-Leste" }
+                    { 170, "Bahamas" },
+                    { 149, "Trinidad and Tobago" },
+                    { 99, "Serbia" },
+                    { 151, "Mauritius" }
                 });
 
             migrationBuilder.InsertData(
@@ -445,6 +329,9 @@ namespace TaskManager.API.Migrations
                 columns: new[] { "CountryID", "CountryName" },
                 values: new object[,]
                 {
+                    { 152, "Swaziland" },
+                    { 153, "Bahrain" },
+                    { 154, "Timor-Leste" },
                     { 155, "Cyprus" },
                     { 156, "Fiji" },
                     { 157, "Djibouti" },
@@ -460,12 +347,10 @@ namespace TaskManager.API.Migrations
                     { 167, "Cape Verde" },
                     { 168, "Malta" },
                     { 169, "Brunei" },
-                    { 170, "Bahamas" },
-                    { 148, "Guinea-Bissau" },
-                    { 98, "Bulgaria" },
-                    { 99, "Serbia" },
-                    { 96, "Israel" },
-                    { 26, "Spain" },
+                    { 171, "Maldives" },
+                    { 97, "Tajikistan" },
+                    { 95, "Switzerland" },
+                    { 46, "Ghana" },
                     { 27, "Colombia" },
                     { 28, "Ukraine" },
                     { 29, "Tanzania" },
@@ -475,8 +360,8 @@ namespace TaskManager.API.Migrations
                     { 33, "Algeria" },
                     { 34, "Canada" },
                     { 35, "Uganda" },
+                    { 26, "Spain" },
                     { 36, "Iraq" },
-                    { 37, "Morocco" },
                     { 38, "Sudan" },
                     { 39, "Peru" },
                     { 40, "Malaysia" },
@@ -484,9 +369,8 @@ namespace TaskManager.API.Migrations
                     { 42, "Saudi Arabia" },
                     { 43, "Venezuela" },
                     { 44, "Nepal" },
-                    { 97, "Tajikistan" },
-                    { 46, "Ghana" },
-                    { 25, "Myanmar" }
+                    { 45, "Afghanistan" },
+                    { 96, "Israel" }
                 });
 
             migrationBuilder.InsertData(
@@ -494,10 +378,10 @@ namespace TaskManager.API.Migrations
                 columns: new[] { "CountryID", "CountryName" },
                 values: new object[,]
                 {
-                    { 47, "Yemen" },
+                    { 37, "Morocco" },
+                    { 25, "Myanmar" },
                     { 24, "South Korea" },
-                    { 22, "Italy" },
-                    { 1, "China" },
+                    { 23, "South Africa" },
                     { 2, "United States" },
                     { 3, "Indonesia" },
                     { 4, "Brazil" },
@@ -518,24 +402,24 @@ namespace TaskManager.API.Migrations
                     { 19, "Thailand" },
                     { 20, "France" },
                     { 21, "United Kingdom" },
-                    { 23, "South Africa" },
+                    { 22, "Italy" },
+                    { 47, "Yemen" },
+                    { 1, "China" },
                     { 48, "North Korea" },
-                    { 45, "Afghanistan" },
                     { 50, "Taiwan" },
+                    { 75, "Guinea" },
                     { 76, "Greece" },
-                    { 49, "Mozambique" },
+                    { 77, "Tunisia" },
                     { 78, "Portugal" },
                     { 79, "Rwanda" },
                     { 80, "Czech Republic" },
                     { 81, "Haiti" },
                     { 82, "Bolivia" },
                     { 83, "Somalia" },
+                    { 74, "Belgium" },
                     { 84, "Hungary" },
-                    { 75, "Guinea" },
-                    { 85, "Benin" },
-                    { 87, "Belarus" },
-                    { 88, "Dominican Republic" },
-                    { 89, "Azerbaijan" }
+                    { 86, "Sweden" },
+                    { 87, "Belarus" }
                 });
 
             migrationBuilder.InsertData(
@@ -543,38 +427,38 @@ namespace TaskManager.API.Migrations
                 columns: new[] { "CountryID", "CountryName" },
                 values: new object[,]
                 {
+                    { 88, "Dominican Republic" },
+                    { 89, "Azerbaijan" },
                     { 90, "Austria" },
                     { 91, "Honduras" },
                     { 92, "United Arab Emirates" },
                     { 93, "South Sudan" },
                     { 94, "Burundi" },
-                    { 95, "Switzerland" },
-                    { 86, "Sweden" },
-                    { 74, "Belgium" },
-                    { 77, "Tunisia" },
-                    { 72, "Chad" },
+                    { 85, "Benin" },
+                    { 49, "Mozambique" },
+                    { 73, "Cuba" },
+                    { 71, "Zimbabwe" },
                     { 51, "Australia" },
                     { 52, "Syria" },
                     { 53, "Ivory Coast" },
                     { 54, "Madagascar" },
                     { 55, "Angola" },
                     { 56, "Sri Lanka" },
-                    { 73, "Cuba" },
+                    { 57, "Cameroon" },
                     { 58, "Romania" },
                     { 59, "Kazakhstan" },
+                    { 72, "Chad" },
                     { 60, "Netherlands" },
-                    { 57, "Cameroon" },
                     { 62, "Niger" },
-                    { 61, "Chile" },
-                    { 70, "Zambia" },
-                    { 69, "Cambodia" },
-                    { 68, "Senegal" },
-                    { 71, "Zimbabwe" },
-                    { 66, "Mali" },
-                    { 65, "Guatemala" },
-                    { 64, "Ecuador" },
                     { 63, "Burkina Faso" },
-                    { 67, "Malawi" }
+                    { 64, "Ecuador" },
+                    { 65, "Guatemala" },
+                    { 66, "Mali" },
+                    { 67, "Malawi" },
+                    { 68, "Senegal" },
+                    { 69, "Cambodia" },
+                    { 70, "Zambia" },
+                    { 61, "Chile" }
                 });
 
             migrationBuilder.InsertData(
@@ -582,10 +466,10 @@ namespace TaskManager.API.Migrations
                 columns: new[] { "TaskPriorityID", "TaskPriorityName" },
                 values: new object[,]
                 {
-                    { 1, "Urgent" },
                     { 2, "Normal" },
-                    { 3, "Below Normal" },
-                    { 4, "Low" }
+                    { 1, "Urgent" },
+                    { 4, "Low" },
+                    { 3, "Below Normal" }
                 });
 
             migrationBuilder.InsertData(
@@ -593,12 +477,22 @@ namespace TaskManager.API.Migrations
                 columns: new[] { "TaskStatusID", "TaskStatusName" },
                 values: new object[,]
                 {
-                    { 4, "Finished" },
-                    { 1, "Holding" },
-                    { 2, "Prioritized" },
                     { 3, "Started" },
-                    { 5, "Reverted" }
+                    { 2, "Prioritized" },
+                    { 5, "Reverted" },
+                    { 4, "Finished" },
+                    { 1, "Holding" }
                 });
+
+            migrationBuilder.InsertData(
+                table: "UserType",
+                columns: new[] { "UserTypeID", "UserTypeName" },
+                values: new object[] { 2, "Employee" });
+
+            migrationBuilder.InsertData(
+                table: "UserType",
+                columns: new[] { "UserTypeID", "UserTypeName" },
+                values: new object[] { 1, "Admin" });
 
             migrationBuilder.InsertData(
                 table: "Projects",
@@ -609,45 +503,6 @@ namespace TaskManager.API.Migrations
                 table: "Projects",
                 columns: new[] { "ProjectID", "Active", "ClientLocationID", "DateOfStart", "ProjectName", "Status", "TeamSize" },
                 values: new object[] { 1, true, 2, new DateTime(2017, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Hospital Management System", "In Force", 14 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetRoleClaims_RoleId",
-                table: "AspNetRoleClaims",
-                column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "RoleNameIndex",
-                table: "AspNetRoles",
-                column: "NormalizedName",
-                unique: true,
-                filter: "[NormalizedName] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserClaims_UserId",
-                table: "AspNetUserClaims",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserLogins_UserId",
-                table: "AspNetUserLogins",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserRoles_RoleId",
-                table: "AspNetUserRoles",
-                column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "EmailIndex",
-                table: "AspNetUsers",
-                column: "NormalizedEmail");
-
-            migrationBuilder.CreateIndex(
-                name: "UserNameIndex",
-                table: "AspNetUsers",
-                column: "NormalizedUserName",
-                unique: true,
-                filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Projects_ClientLocationID",
@@ -698,21 +553,6 @@ namespace TaskManager.API.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AspNetRoleClaims");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUserClaims");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUserLogins");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUserRoles");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUserTokens");
-
-            migrationBuilder.DropTable(
                 name: "Countries");
 
             migrationBuilder.DropTable(
@@ -722,7 +562,7 @@ namespace TaskManager.API.Migrations
                 name: "TaskStatusDetails");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                name: "UserType");
 
             migrationBuilder.DropTable(
                 name: "Tasks");
@@ -731,13 +571,13 @@ namespace TaskManager.API.Migrations
                 name: "TaskStatuses");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
                 name: "Projects");
 
             migrationBuilder.DropTable(
                 name: "TaskPriorities");
+
+            migrationBuilder.DropTable(
+                name: "UserMaster");
 
             migrationBuilder.DropTable(
                 name: "ClientLocations");
