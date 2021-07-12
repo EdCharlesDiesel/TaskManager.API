@@ -37,53 +37,53 @@ namespace TaskManager.API.Controllers
                 return NoContent();
         }
 
-        //[HttpPost]
-        //[Route("api/countries")]
+        [HttpPost]
+        [Route("api/countries")]
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        //public Country Post([FromBody] Country country)
-        //{
-        //    db.Countries.Add(country);
-        //    db.SaveChanges();
+        public Country Post([FromBody] Country country)
+        {
+            db.Countries.Add(country);
+            db.SaveChanges();
 
-        //    Country existingCountry = db.Countries.Where(temp => temp.CountryID == country.CountryID).FirstOrDefault();
-        //    return existingCountry;
-        //}
+            Country existingCountry = db.Countries.Where(temp => temp.CountryID == country.CountryID).FirstOrDefault();
+            return existingCountry;
+        }
 
-        //[HttpPut]
-        //[Route("api/countries")]
+        [HttpPut]
+        [Route("api/countries")]
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        //public Country Put([FromBody] Country country)
-        //{
-        //    Country existingCountry = db.Countries.Where(temp => temp.CountryID == country.CountryID).FirstOrDefault();
-        //    if (existingCountry != null)
-        //    {
-        //        existingCountry.CountryName = country.CountryName;
-        //        db.SaveChanges();
-        //        return existingCountry;
-        //    }
-        //    else
-        //    {
-        //        return null;
-        //    }
-        //}
+        public Country Put([FromBody] Country country)
+        {
+            Country existingCountry = db.Countries.Where(temp => temp.CountryID == country.CountryID).FirstOrDefault();
+            if (existingCountry != null)
+            {
+                existingCountry.CountryName = country.CountryName;
+                db.SaveChanges();
+                return existingCountry;
+            }
+            else
+            {
+                return null;
+            }
+        }
 
-        //[HttpDelete]
-        //[Route("api/countries")]
+        [HttpDelete]
+        [Route("api/countries")]
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        //public int Delete(int CountryID)
-        //{
-        //    Country existingCountry = db.Countries.Where(temp => temp.CountryID == CountryID).FirstOrDefault();
-        //    if (existingCountry != null)
-        //    {
-        //        db.Countries.Remove(existingCountry);
-        //        db.SaveChanges();
-        //        return CountryID;
-        //    }
-        //    else
-        //    {
-        //        return -1;
-        //    }
-        //}
+        public int Delete(int CountryID)
+        {
+            Country existingCountry = db.Countries.Where(temp => temp.CountryID == CountryID).FirstOrDefault();
+            if (existingCountry != null)
+            {
+                db.Countries.Remove(existingCountry);
+                db.SaveChanges();
+                return CountryID;
+            }
+            else
+            {
+                return -1;
+            }
+        }
     }
 }
 

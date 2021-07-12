@@ -12,6 +12,8 @@ namespace TaskManager.API.Contexts
 
         }
 
+        public virtual DbSet<UserMaster> UserMaster { get; set; }
+        public virtual DbSet<UserType> UserType { get; set; }
         public DbSet<ClientLocation> ClientLocations { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<Country> Countries { get; set; }

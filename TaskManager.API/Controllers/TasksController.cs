@@ -23,16 +23,18 @@ namespace TaskManager.API.Controllers
         {
             string currentUserId = User.Identity.Name;
             List<GroupedTask> grouppedTasks = new List<GroupedTask>();
-            List<TaskManager.API.Models.Task> taskStatuses = db.TaskStatusDetails.ToList()            
-            
-                .Include(temp => temp.CreatedByUser)
-                .Include(temp => temp.AssignedToUser)
-                .Include(temp => temp.Project).ThenInclude(temp => temp.ClientLocation)
-                .Include(temp => temp.TaskStatusDetails)
-                .Include(temp => temp.TaskPriority)
-                .Where(temp => temp.CreatedBy == currentUserId || temp.AssignedTo == currentUserId)
-                .OrderBy(temp => temp.TaskPriorityID)
-                .ThenByDescending(temp => temp.LastUpdatedOn).ToList();
+            List<TaskManager.API.Models.TaskStatus> taskStatuses = db.TaskStatuses.ToList();
+
+            //.Include(temp => temp.CreatedByUser)
+            //.Include(temp => temp.AssignedToUser)
+            //.Include(temp => temp.Project).ThenInclude(temp => temp.ClientLocation)
+            //.Include(temp => temp.TaskStatusDetails)
+            //.Include(temp => temp.TaskPriority)
+            //.Where(temp => temp.CreatedBy == currentUserId || temp.AssignedTo == currentUserId)
+            //.OrderBy(temp => temp.TaskPriorityID)
+            //.ThenByDescending(temp => temp.LastUpdatedOn).ToList();
+
+            var tasks = new List<TaskManager.API.Models.Task>().ToList();
 
             foreach (var item in tasks)
             {
@@ -68,13 +70,13 @@ namespace TaskManager.API.Controllers
         public IActionResult GetByTaskID(int TaskID)
         {
             //Get task from database
-            TaskManager.API.Models.Task task = db.Tasks
-                .Include(temp => temp.CreatedByUser)
-                .Include(temp => temp.AssignedToUser)
-                .Include(temp => temp.Project).ThenInclude(temp => temp.ClientLocation)
-                .Include(temp => temp.TaskStatusDetails)
-                .Include(temp => temp.TaskPriority)
-                .Where(temp => temp.TaskID == TaskID)
+            TaskManager.API.Models.Task task = db.Tasks.Where(temp => temp.TaskID == TaskID)
+                //.Include(temp => temp.CreatedByUser)
+                //.Include(temp => temp.AssignedToUser)
+                //.Include(temp => temp.Project).ThenInclude(temp => temp.ClientLocation)
+                //.Include(temp => temp.TaskStatusDetails)
+                //.Include(temp => temp.TaskPriority)
+
                 .FirstOrDefault();
 
             if (task != null)
@@ -121,43 +123,42 @@ namespace TaskManager.API.Controllers
 
 
 
-        //    [HttpPost]        
-        //    [Route("/api/createtask")]
-        //    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        //    public IActionResult Post([FromBody] Task task)
-        //    public IActionResult Index()
-        //    {
-        //        task.Project = null;
-        //        task.CreatedByUser = null;
-        //        task.AssignedToUser = null;
-        //        task.TaskPriority = null;
-        //        task.TaskStatusDetails = null;
-        //        task.CreatedOn = DateTime.Now;
-        //        task.LastUpdatedOn = DateTime.Now;
-        //        task.CurrentStatus = "Holding";
-        //        task.CurrentTaskStatusID = 1;
-        //        task.CreatedOnString = task.CreatedOn.ToString("dd/MM/yyyy");
-        //        task.LastUpdatedOnString = task.LastUpdatedOn.ToString("dd/MM/yyyy");
-        //        task.CreatedBy = User.Identity.Name;
+        [HttpPost]
+        [Route("/api/createtask")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public IActionResult Post([FromBody] Task task)
+            
+        {
+            task.Project = null;
+            task.CreatedByUser = null;
+            task.AssignedToUser = null;
+            task.TaskPriority = null;
+            task.TaskStatusDetails = null;
+            task.CreatedOn = DateTime.Now;
+            task.LastUpdatedOn = DateTime.Now;
+            task.CurrentStatus = "Holding";
+            task.CurrentTaskStatusID = 1;
+            task.CreatedOnString = task.CreatedOn.ToString("dd/MM/yyyy");
+            task.LastUpdatedOnString = task.LastUpdatedOn.ToString("dd/MM/yyyy");
+            task.CreatedBy = User.Identity.Name;
 
-        //        db.Tasks.Add(task);
-        //        db.SaveChanges();
+            db.Tasks.Add(task);
+            db.SaveChanges();
 
-        //        TaskStatusDetail taskStatusDetail = new TaskStatusDetail();
-        //        taskStatusDetail.TaskID = task.TaskID;
-        //        taskStatusDetail.UserID = task.CreatedBy;
-        //        taskStatusDetail.TaskStatusID = 1;
-        //        taskStatusDetail.StatusUpdationDateTime = DateTime.Now;
-        //        taskStatusDetail.TaskStatus = null;
-        //        taskStatusDetail.User = null;
-        //        taskStatusDetail.Description = "Task Created";
-        //        db.TaskStatusDetails.Add(taskStatusDetail);
-        //        db.SaveChanges();
+            TaskStatusDetail taskStatusDetail = new TaskStatusDetail();
+            taskStatusDetail.TaskID = task.TaskID;
+            taskStatusDetail.UserID = task.CreatedBy;
+            taskStatusDetail.TaskStatusID = 1;
+            taskStatusDetail.StatusUpdationDateTime = DateTime.Now;
+            taskStatusDetail.TaskStatus = null;
+            taskStatusDetail.User = null;
+            taskStatusDetail.Description = "Task Created";
+            db.TaskStatusDetails.Add(taskStatusDetail);
+            db.SaveChanges();
 
-        //        Task existingTask = db.Tasks.Where(temp => temp.TaskID == task.TaskID).FirstOrDefault();
-        //        return Ok(existingTask);
-        //        return View();
-        //    }
-        //}
+            Task existingTask = db.Tasks.Where(temp => temp.TaskID == task.TaskID).FirstOrDefault();
+            return Ok(existingTask);            
+        }
     }
 }
+
