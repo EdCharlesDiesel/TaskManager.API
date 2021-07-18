@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +17,7 @@ namespace TaskManager.Controllers
 
         [HttpPost]
         [Route("api/routerlogger")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             string logMessage = null;
             using (StreamReader streamReader = new StreamReader(Request.Body, Encoding.ASCII))

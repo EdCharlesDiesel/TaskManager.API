@@ -12,8 +12,8 @@ namespace TaskManager.API.Models
         public string SkillLevel { get; set; }
         public string Id { get; set; }
 
-        [ForeignKey("Id")]
-        public virtual UserMaster ApplicationUser { get; set; }
+        //[ForeignKey("Id")]
+        //public virtual UserMaster ApplicationUser { get; set; }
     }
 }
 
